@@ -1,15 +1,22 @@
 import "./App.css";
 import { useState } from "react";
-import { WeatherData, fetchWeather } from "./api/fetchWeather";
+import { WeatherData, WeatherError, fetchWeather } from "./api/fetchWeather";
 
 function App() {
   const [query, setQuery] = useState("");
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [error, setError] = useState<WeatherError | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const search = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const data = await fetchWeather(query);
+      setError(null);
+      setWeatherData(null);
+      setLoading(true);
+      const { data, error } = await fetchWeather(query);
       setWeatherData(data);
+      setError(error);
+      setLoading(false);
       setQuery("");
     }
   };
@@ -26,6 +33,18 @@ function App() {
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={search}
       />
+
+      {error && (
+        <div className="city">
+          <h2>{error.message}</h2>
+        </div>
+      )}
+
+      {loading && (
+        <div className="city">
+          <h2>Loading...</h2>
+        </div>
+      )}
 
       {weatherData?.main && (
         <div className="city">

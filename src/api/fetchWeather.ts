@@ -46,14 +46,33 @@ export type WeatherData = {
   cod: number;
 };
 
-export const fetchWeather = async (query: string) => {
-  const { data }: { data: WeatherData } = await axios.get(URL, {
-    params: {
-      q: query,
-      units: "metric",
-      APPID: API_KEY,
-    },
-  });
+export type WeatherError = {
+  message: string;
+  code: number;
+};
 
-  return data;
+export const fetchWeather = async (
+  query: string
+): Promise<{ data: WeatherData | null; error: WeatherError | null }> => {
+  try {
+    const { data } = await axios.get(URL, {
+      params: {
+        q: query,
+        units: "metric",
+        APPID: API_KEY,
+      },
+    });
+    return { data, error: null };
+  } catch (error) {
+    console.log(error);
+    const err = {
+      message:
+        error.response.data.message === "city not found"
+          ? "Oops! City not found on the Earth. 🌎"
+          : error.response.data.message ??
+            "Oops! The weather data is hiding behind some clouds. We'll work our magic and have it back for you shortly. ☁️⛅",
+      code: error.code || 500,
+    };
+    return { data: null, error: err };
+  }
 };
