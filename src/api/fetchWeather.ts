@@ -63,8 +63,7 @@ export const fetchWeather = async (
       },
     });
     return { data, error: null };
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
     const err = {
       message:
         error.response.data.message === "city not found"
