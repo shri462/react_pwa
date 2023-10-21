@@ -1,10 +1,10 @@
 import "./App.css";
 import { useState } from "react";
-import { fetchWeather } from "./api/fetchWeather";
+import { WeatherData, fetchWeather } from "./api/fetchWeather";
 
 function App() {
   const [query, setQuery] = useState("");
-  const [weatherData, setWeatherData] = useState({});
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
 
   const search = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -27,7 +27,7 @@ function App() {
         onKeyDown={search}
       />
 
-      {weatherData.main && (
+      {weatherData?.main && (
         <div className="city">
           <h2 className="city-name">
             <span>{weatherData.name}</span>
